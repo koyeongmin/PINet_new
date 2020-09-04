@@ -54,6 +54,7 @@ Finally, you can run "fix_dataset.py", and it will generate dataset according to
 You can download the dataset from https://xingangpan.github.io/projects/CULane.html.
 
 If you download the dataset from the link, you can find some files and we recommand to make below structure.
+
     dataset
       |
       |----train_set/               # training root 
