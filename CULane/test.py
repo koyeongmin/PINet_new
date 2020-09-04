@@ -7,9 +7,6 @@
 import cv2
 import json
 import torch
-#import sys
-#sys.path.append('/home/kym/research/autonomous_car_vision/lanedection/code/')
-#import util
 import agent
 import numpy as np
 from copy import deepcopy
@@ -48,7 +45,7 @@ def Testing():
     else:
         lane_agent = agent.Agent()
         lane_agent.load_weights(296, "tensor(1.6947)")
-	#lane_agent.load_weights(1502, "tensor(0.1976)")
+	
     ##############################
     ## Check GPU
     ##############################
@@ -125,10 +122,6 @@ def evaluation(loader, lane_agent, thresh = p.threshold_point, index= -1, name =
         result_data = write_result(x_, y_, path)
         progressbar.update(1)
     progressbar.close()
-    #if name == None:
-    #    save_result(result_data, "test_result.json")
-    #else:
-    #    save_result(result_data, name)
 
 ############################################################################
 ## linear interpolation for fixed y value on the test dataset
@@ -162,20 +155,6 @@ def find_target(x, y, ratio_w, ratio_h):
                             break
                 else:
                     temp_x.append(-2)
-                    '''
-                    if i[0] < i[1]:
-                        l = int(i[1] - float(-j[1] + h)*abs(i[1]-i[0])/abs(j[1]+0.0001 - j[0]))
-                        if l > x_size or l < 0 :
-                            temp_x.append(-2)
-                        else:
-                            temp_x.append(l)
-                    else:
-                        l = int(i[1] + float(-j[1] + h)*abs(i[1]-i[0])/abs(j[1]+0.0001 - j[0]))
-                        if l > x_size or l < 0 :
-                            temp_x.append(-2)
-                        else:
-                            temp_x.append(l)
-                    '''
             predict_x_batch.append(temp_x)
             predict_y_batch.append(temp_y)
         out_x.append(predict_x_batch)
@@ -213,8 +192,6 @@ def fitting(x, y, ratio_w, ratio_h):
             last_second = 0
             last_y = 0
             last_second_y = 0
-            #for pts in range(17, -1, -1):
-                #h = 590 - pts*20 - 1
             for pts in range(62, -1, -1):
                 h = 590 - pts*5 - 1
                 temp_y.append(h)
@@ -328,9 +305,6 @@ def test(lane_agent, test_images, thresh = p.threshold_point, index= -1):
                 
         # sort points along y 
         in_x, in_y = util.sort_along_y(in_x, in_y)  
-        #in_x, in_y = eliminate_out(in_x, in_y, confidence, deepcopy(image))
-        #in_x, in_y = util.sort_along_y(in_x, in_y)
-        #in_x, in_y = eliminate_fewer_points(in_x, in_y)
 
         result_image = util.draw_points(in_x, in_y, deepcopy(image))
 
@@ -339,109 +313,6 @@ def test(lane_agent, test_images, thresh = p.threshold_point, index= -1):
         out_images.append(result_image)
 
     return out_x, out_y,  out_images
-
-############################################################################
-## post processing for eliminating outliers
-############################################################################
-def eliminate_out(sorted_x, sorted_y, confidence, image = None):
-    out_x = []
-    out_y = []
-
-    for lane_x, lane_y in zip(sorted_x, sorted_y):
-
-        lane_x_along_y = np.array(deepcopy(lane_x))
-        lane_y_along_y = np.array(deepcopy(lane_y))
-
-        ind = np.argsort(lane_x_along_y, axis=0)
-        lane_x_along_x = np.take_along_axis(lane_x_along_y, ind, axis=0)
-        lane_y_along_x = np.take_along_axis(lane_y_along_y, ind, axis=0)
-        
-        if lane_y_along_x[0] > lane_y_along_x[-1]: #if y of left-end point is higher than right-end
-            starting_points = [(lane_x_along_y[0], lane_y_along_y[0]), (lane_x_along_y[1], lane_y_along_y[1]), (lane_x_along_y[2], lane_y_along_y[2]),
-                                (lane_x_along_x[0], lane_y_along_x[0]), (lane_x_along_x[1], lane_y_along_x[1]), (lane_x_along_x[2], lane_y_along_x[2])] # some low y, some left/right x
-        else:
-            starting_points = [(lane_x_along_y[0], lane_y_along_y[0]), (lane_x_along_y[1], lane_y_along_y[1]), (lane_x_along_y[2], lane_y_along_y[2]),
-                                (lane_x_along_x[-1], lane_y_along_x[-1]), (lane_x_along_x[-2], lane_y_along_x[-2]), (lane_x_along_x[-3], lane_y_along_x[-3])] # some low y, some left/right x            
-    
-        temp_x = []
-        temp_y = []
-        for start_point in starting_points:
-            temp_lane_x, temp_lane_y = generate_cluster(start_point, lane_x, lane_y, image)
-            temp_x.append(temp_lane_x)
-            temp_y.append(temp_lane_y)
-        
-        max_lenght_x = None
-        max_lenght_y = None
-        max_lenght = 0
-        for i, j in zip(temp_x, temp_y):
-            if len(i) > max_lenght:
-                max_lenght = len(i)
-                max_lenght_x = i
-                max_lenght_y = j
-        out_x.append(max_lenght_x)
-        out_y.append(max_lenght_y)
-
-    return out_x, out_y
-
-############################################################################
-## generate cluster
-############################################################################
-def generate_cluster(start_point, lane_x, lane_y, image = None):
-    cluster_x = [start_point[0]]
-    cluster_y = [start_point[1]]
-
-    point = start_point
-    while True:
-        points = util.get_closest_upper_point(lane_x, lane_y, point, 3)
-         
-        max_num = -1
-        max_point = None
-
-        if len(points) == 0:
-            break
-        if len(points) < 3:
-            for i in points: 
-                cluster_x.append(i[0])
-                cluster_y.append(i[1])                
-            break
-        for i in points: 
-            num, shortest = util.get_num_along_point(lane_x, lane_y, point, i, image)
-            if max_num < num:
-                max_num = num
-                max_point = i
-
-        total_remain = len(np.array(lane_y)[np.array(lane_y) < point[1]])
-        cluster_x.append(max_point[0])
-        cluster_y.append(max_point[1])
-        point = max_point
-        
-        if len(points) == 1 or max_num < total_remain/5:
-            break
-
-    return cluster_x, cluster_y
-
-############################################################################
-## remove same value on the prediction results
-############################################################################
-def remove_same_point(x, y):
-    out_x = []
-    out_y = []
-    for lane_x, lane_y in zip(x, y):
-        temp_x = []
-        temp_y = []
-        for i in range(len(lane_x)):
-            if len(temp_x) == 0 :
-                temp_x.append(lane_x[i])
-                temp_y.append(lane_y[i])
-            else:
-                if temp_x[-1] == lane_x[i] and temp_y[-1] == lane_y[i]:
-                    continue
-                else:
-                    temp_x.append(lane_x[i])
-                    temp_y.append(lane_y[i])     
-        out_x.append(temp_x)  
-        out_y.append(temp_y)  
-    return out_x, out_y
 
 ############################################################################
 ## eliminate result that has fewer points than threshold
@@ -462,7 +333,6 @@ def eliminate_fewer_points(x, y):
 def generate_result(confidance, offsets,instance, thresh):
 
     mask = confidance > thresh
-    #print(mask)
 
     grid = p.grid_location[mask]
     offset = offsets[mask]
@@ -501,5 +371,6 @@ def generate_result(confidance, offsets,instance, thresh):
                     y.append([point_y])
                 
     return x, y
+
 if __name__ == '__main__':
     Testing()
