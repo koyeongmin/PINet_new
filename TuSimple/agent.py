@@ -36,9 +36,6 @@ class Agent(nn.Module):
 
         self.setup_optimizer()
 
-	#lambda1 = lambda epoch: 0.92 ** (epoch // 10)
-	#self.scheduler = torch.optim.lr_scheduler.LambdaLR(self.lane_detection_optim, lr_lambda=lambda1)
-
         self.current_epoch = 0
 
         self.hard_sampling = hard_sampling.hard_sampling()
@@ -143,7 +140,6 @@ class Agent(nn.Module):
     #####################################################
     def train(self, inputs, target_lanes, target_h, epoch, agent, data_list):
         point_loss = self.train_point(inputs, target_lanes, target_h, epoch, data_list)
-	#self.scheduler.step()
         return point_loss
 
     #####################################################
@@ -211,16 +207,12 @@ class Agent(nn.Module):
             exist_condidence_loss =  exist_condidence_loss +\
 				torch.sum( (1-confidance[confidance_gt==1])**2 )/\
 				torch.sum(confidance_gt==1)
-				#torch.sum(-1 *(1-confidance[confidance_gt==1].data)**2 * torch.log(confidance[confidance_gt==1]))/\
-				#torch.sum(confidance_gt==1)
 
             #non exist confidance loss##########################
             target = confidance[confidance_gt==0]
             nonexist_confidence_loss =  nonexist_confidence_loss +\
 				torch.sum( ( target[target>0.01] )**2 )/\
 				(torch.sum(target>0.01)+1)
-				#torch.sum(-1 *(confidance[confidance_gt==0].data)**2 * torch.log(1 - confidance[confidance_gt==0]))/\
-				#torch.sum(confidance_gt==0)
 
             #offset loss ##################################
             offset_x_gt = ground_truth_point[:, 1:2, :, :]
@@ -234,14 +226,6 @@ class Agent(nn.Module):
 				        torch.sum(confidance_gt==1) + \
 			            torch.sum( (offset_y_gt[confidance_gt==1] - predict_y[confidance_gt==1])**2 )/\
 				        torch.sum(confidance_gt==1)
-
-            #for i in range(real_batch_size):
-            #    x_offset_loss = x_offset_loss + \
-            #        	 	torch.sum( (offset_x_gt[i][confidance_gt[i]==1] - predict_x[i][confidance_gt[i]==1])**2 )/\
-	    #	    		(torch.sum(confidance_gt[i]==1)*real_batch_size*2)
-            #    y_offset_loss = y_offset_loss +\
-            #        		torch.sum( (offset_y_gt[i][confidance_gt[i]==1] - predict_y[i][confidance_gt[i]==1])**2 )/\
-	    #			(torch.sum(confidance_gt[i]==1)*real_batch_size*2)
 
             #compute loss for similarity #################
             feature_map = feature.view(real_batch_size, self.p.feature_size, 1, self.p.grid_y*self.p.grid_x)
@@ -276,7 +260,6 @@ class Agent(nn.Module):
             target = m(target)
             for j in source:
                 s = torch.sum(j[i]**2, dim=0).view(-1)
-                #s = s/torch.max(s).data
                 attention_loss = attention_loss + torch.sum( (m(s) - target)**2 )/(len(target)*real_batch_size)
 
         lane_detection_loss = lane_detection_loss + self.p.constant_exist*exist_condidence_loss
@@ -311,8 +294,6 @@ class Agent(nn.Module):
         del feature_map, point_feature, distance_map
         del exist_condidence_loss, nonexist_confidence_loss, offset_loss, sisc_loss, disc_loss
 
-        #trim = 17+300+53+81
-        #trim = 370 +13
         trim = 180 #70+30+70 + 110
         if epoch>0 and epoch%100==0 and self.current_epoch != epoch:
             self.current_epoch = epoch
@@ -349,11 +330,6 @@ class Agent(nn.Module):
             elif epoch == 350-trim:
                 self.p.l_rate = 0.00000001
                 self.setup_optimizer()    
-            #    self.p.constant_lane_loss += 0.5
-	    #if epoch>0 and (epoch == 200):
-	    #    self.p.l_rate /= 2.0
-	    #    self.setup_optimizer()
-
 
         return lane_detection_loss
 
