@@ -36,9 +36,6 @@ class Agent(nn.Module):
 
         self.setup_optimizer()
 
-        #lambda1 = lambda epoch: 0.92 ** (epoch // 10)
-        # #self.scheduler = torch.optim.lr_scheduler.LambdaLR(self.lane_detection_optim, lr_lambda=lambda1)
-
         self.current_epoch = 0
 
         self.hard_sampling = hard_sampling.hard_sampling()
@@ -143,7 +140,6 @@ class Agent(nn.Module):
     #####################################################
     def train(self, inputs, target_lanes, target_h, epoch, agent, data_list):
         point_loss = self.train_point(inputs, target_lanes, target_h, epoch, data_list)
-        #self.scheduler.step()
         return point_loss
 
     #####################################################
@@ -264,7 +260,6 @@ class Agent(nn.Module):
             target = m(target)
             for j in source:
                 s = torch.sum(j[i]**2, dim=0).view(-1)
-                #s = s/torch.max(s).data
                 attention_loss = attention_loss + torch.sum( (m(s) - target)**2 )/(len(target)*real_batch_size)
 
         lane_detection_loss = lane_detection_loss + self.p.constant_exist*exist_condidence_loss
