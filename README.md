@@ -1,10 +1,10 @@
-## key points estimation and point instance segmentation approach for lane detection
+# key points estimation and point instance segmentation approach for lane detection
 
 - Yeongmin Ko, Yunkwan Lee, Shoaib Azam, Farzeen Munir, Moongu Jeon, Witold Pedrycz
 - Abstract: Perception techniques for autonomous driving should be adaptive to various environments. In the case of traffic line detection, an essential perception module, many condition should be considered, such as number of traffic lines and computing power of the target system. To address these problems, in this paper, we propose a traffic line detection method called Point Instance Network (PINet); the method is based on the key points estimation and instance segmentation approach. The PINet includes several stacked hourglass networks that are trained simultaneously. Therefore the size of the trained models can be chosen according to the computing power of the target environment. We cast a clustering problem of the predicted key points as an instance segmentation problem; the PINet can be trained regardless of the number of the traffic lines. The PINet achieves competitive accuracy and false positive on the TuSimple and Culane datasets, popular public datasets for lane detection.
 - link: https://arxiv.org/abs/2002.06604
 
-# Dependency
+## Dependency
 - python ( We tested on python3, python2 is also work, but spline fitting is supported only on python3 )
 - pytorch ( We tested on pytorch 1.1.0 with GPU(RTX2080ti))
 - opencv
@@ -133,7 +133,7 @@ line 13 : model_path = "<your model path>/"
 line 54 : lane_agent.load_weights(<>, "tensor(<>)")
 ```
 
-## Network clipping 
+## Network Clipping 
 PINet is made of several hourglass modules; these hourglass modules are train by the same loss function.
 
 We can make ligher model without addtional training by clipping some hourglass modules.
@@ -150,13 +150,15 @@ self.layer2 = hourglass_block(128, 128)
 ## Result
 You can find more detail results at our paper.
 
-- TuSimple (4 hourglass module)
+4 horglass modules is run about 25fps on RTX2080ti
+
+- TuSimple (4 hourglass modules)
 
 | Accuracy | FP   | FN   |
 | -------- | ---- | ---- |
 | 96.75%   |0.0310|0.0250|
 
-- CULane (4 hourglass module)
+- CULane (4 hourglass modules)
 
 | Category  | F1-measure          |
 | --------- | ------------------- |
