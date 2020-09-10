@@ -123,7 +123,7 @@ If you want to train from scratch, make line 13 blank in "parameters.py", and ru
 # In "parameters.py"
 line 13 : model_path = ""
 ```
-"train.py" will save sample result images(in "test_result/"), trained model(in "savefile/"), and evaluation result for some threshold values(0.3, 0.5, 0.7). However, in the most case, around 0.8 show the best performance.
+"train.py" will save sample result images(in "test_result/"), trained model(in "savefile/").
 
 If you want to train from a trained model, just change following 2 lines.
 ```
