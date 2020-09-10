@@ -1,6 +1,6 @@
 # key points estimation and point instance segmentation approach for lane detection
 
-- Yeongmin Ko, Yunkwan Lee, Shoaib Azam, Farzeen Munir, Moongu Jeon, Witold Pedrycz
+- Yeongmin Ko, Younkwan Lee, Shoaib Azam, Farzeen Munir, Moongu Jeon, Witold Pedrycz
 - Abstract: Perception techniques for autonomous driving should be adaptive to various environments. In the case of traffic line detection, an essential perception module, many condition should be considered, such as number of traffic lines and computing power of the target system. To address these problems, in this paper, we propose a traffic line detection method called Point Instance Network (PINet); the method is based on the key points estimation and instance segmentation approach. The PINet includes several stacked hourglass networks that are trained simultaneously. Therefore the size of the trained models can be chosen according to the computing power of the target environment. We cast a clustering problem of the predicted key points as an instance segmentation problem; the PINet can be trained regardless of the number of the traffic lines. The PINet achieves competitive accuracy and false positive on the TuSimple and Culane datasets, popular public datasets for lane detection.
 - link: https://arxiv.org/abs/2002.06604
 
