@@ -368,25 +368,17 @@ def test_ori(lane_agent, ori_image, test_images,w_ratio, h_ratio, draw_type, thr
         offset = offsets[i].cpu().data.numpy()
         offset = np.rollaxis(offset, axis=2, start=0)
         offset = np.rollaxis(offset, axis=2, start=0)
-        print("offset_shape:",offset.shape)
-        print("offset:",offset)
-
         
         instance = instances[i].cpu().data.numpy()
         instance = np.rollaxis(instance, axis=2, start=0)
         instance = np.rollaxis(instance, axis=2, start=0)
-        print("instance_shape:",instance.shape)
-        print("instance:",instance)
-
-
+   
         # generate point and cluster
         raw_x, raw_y = generate_result(confidence, offset, instance, thresh)
 
         # eliminate fewer points
         in_x, in_y = eliminate_fewer_points(raw_x, raw_y)
-        # print("in_x",in_x) 
-        # print("in_y",in_y) 
-                
+     
         # sort points along y 
         in_x, in_y = util.sort_along_y(in_x, in_y)  
 
@@ -423,22 +415,10 @@ def generate_result(confidance, offsets,instance, thresh):
 
     mask = confidance > thresh
 
-    print("mask.shape",mask.shape)
-    print("mask",mask)
-
-
     grid = p.grid_location[mask]
-    print("grid.shape",grid.shape)
-    print("grid",grid)
-
 
     offset = offsets[mask]
-    print("offset.shape",offset.shape)
-    print("offset",offset)
-
     feature = instance[mask]
-    print("feature.shape",feature.shape)
-    print("feature",feature)
 
     lane_feature = []
     x = []
