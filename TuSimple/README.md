@@ -1,9 +1,9 @@
+## Dataset (CurveLanes)
+You can download the dataset from https://github.com/xbjxh/CurveLanes.
 
-# Parse Curvelanes
-[CurveLanes Datasets] https://github.com/xbjxh/CurveLanes
+## Parse Curvelanes
+Here are several scripts for parsing and converting datasets to TuSimple style.https://github.com/pandamax/Parse_Curvelanes
 
-parse curvelanes datasets
-
-- parse_curvelanes.py：generate segmentation mask.
-- vis_curvelanes.py: visualize datasets on original image.
-- curvelanes2tusimples.py: convert datasets to tusimple format.
+## ONNX Inference
+- onnx_converter.py: convert trained model into onnx.
+- onnx_inference.py: use onnxruntime to run converted onnx model's inference.
