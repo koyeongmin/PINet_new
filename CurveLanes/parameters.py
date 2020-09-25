@@ -52,8 +52,8 @@ class Parameters():
                     ,(18,52),(19,53),(20,54),(21,55),(22,56),(23,57),(24,58),(25,59),(26,60),(27,61),(28,62),(29,63),(30,64),(31,65)
                     ,(32,66),(33,67),(68,68),(69,69),(70,72),(71,73)]
     
-    train_root_url= "/media/data4/yg/DATASETS/CurveLanes/CurveLanes/train/"
-    test_root_url= "/media/data4/yg/DATASETS/CurveLanes/CurveLanes/valid/"
+    train_root_url= "./dataset/CurveLanes/train/"
+    test_root_url= "./dataset/CurveLanes/valid/"
 
     # test parameter
     color = [(0,0,0), (255,0,0), (0,255,0),(0,0,255),(255,255,0),(255,0,255),(0,255,255),(255,255,255),(100,255,0),(100,0,255),(255,100,0),(0,100,255),(255,0,100),(0,255,100)]
