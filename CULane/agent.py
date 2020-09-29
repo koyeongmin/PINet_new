@@ -295,7 +295,7 @@ class Agent(nn.Module):
         del exist_condidence_loss, nonexist_confidence_loss, offset_loss, sisc_loss, disc_loss
 
         trim = 180
-        if epoch>0 and epoch%100==0 and self.current_epoch != epoch:
+        if epoch>0 and self.current_epoch != epoch:
             self.current_epoch = epoch
             if epoch == 1-trim:
                 self.p.l_rate = 0.0005
