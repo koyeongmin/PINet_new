@@ -1,3 +1,6 @@
+## Update
+2020-11-06: new trained model ("0_tensor(0.5242)_lane_detection_network") (Acc: 96.81%, FP: 0.0387, FN: 0.0245 )
+
 # key points estimation and point instance segmentation approach for lane detection
 
 - Yeongmin Ko, Younkwan Lee, Shoaib Azam, Farzeen Munir, Moongu Jeon, Witold Pedrycz
