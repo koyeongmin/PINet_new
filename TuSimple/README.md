@@ -1,4 +1,4 @@
-## Updata
+## Update
 2020-11-06: new trained model ("0_tensor(0.5242)_lane_detection_network") (Acc: 96.78%)
 
 ## Dataset (TuSimple)
